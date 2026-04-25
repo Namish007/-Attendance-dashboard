@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AI Smart Attendance — NIET</title>
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;600;800&display=swap" rel="stylesheet" />
+</head>
+<body>
+
+  <!-- ══ SIDEBAR  -->
+  <aside class="sidebar">
+    <div class="sidebar__brand">
+      <div class="brand-icon">AI</div>
+      <div>
+        <p class="brand-title">SmartAttend</p>
+        <p class="brand-sub">NIET Greater Noida</p>
+      </div>
+    </div>
+    <nav class="sidebar__nav">
+      <a href="#" class="nav-item active" data-page="dashboard"><span class="nav-icon">◈</span>Dashboard</a>
+      <a href="#" class="nav-item" data-page="camera"><span class="nav-icon">◉</span>Mark Attendance</a>
+      <a href="#" class="nav-item" data-page="records"><span class="nav-icon">◧</span>Records</a>
+      <a href="#" class="nav-item" data-page="students"><span class="nav-icon">◪</span>Students</a>
+      <a href="#" class="nav-item" data-page="enroll"><span class="nav-icon">◫</span>Enroll Student</a>
+      <a href="#" class="nav-item" data-page="admin"><span class="nav-icon">⬡</span>Admin</a>
+    </nav>
+    <div class="sidebar__footer">
+      <div class="status-dot" id="serverStatus"></div>
+      <span id="serverStatusText">Connecting…</span>
+    </div>
+  </aside>
+
+  <!-- ══ MAIN  -->
+  <main class="main">
+    <header class="topbar">
+      <h1 class="topbar__title" id="pageTitle">Dashboard</h1>
+      <div class="topbar__date" id="liveClock"></div>
+    </header>
+
+    <!-- ══ PAGE: DASHBOARD  -->
+    <section class="page active" id="page-dashboard">
+      <div class="stat-grid">
+        <div class="stat-card stat-card--green">
+          <p class="stat-label">Present Today</p>
+          <p class="stat-value" id="statPresent">—</p>
+        </div>
+        <div class="stat-card stat-card--blue">
+          <p class="stat-label">Total Students</p>
+          <p class="stat-value" id="statTotal">—</p>
+        </div>
+        <div class="stat-card stat-card--amber">
+          <p class="stat-label">Absent Today</p>
+          <p class="stat-value" id="statAbsent">—</p>
+        </div>
+        <div class="stat-card stat-card--red">
+          <p class="stat-label">Attendance %</p>
+          <p class="stat-value" id="statPct">—</p>
+        </div>
+      </div>
+      <div class="section-header">
+        <h2>Today's Attendance</h2>
+        <div style="display:flex;gap:8px">
+          <button class="btn btn--ghost" onclick="loadTodayAttendance()">↺ Refresh</button>
+          <button class="btn btn--ghost" onclick="exportToday()">⬇ Export CSV</button>
+        </div>
+      </div>
+      <div class="table-wrap">
+        <table class="data-table">
+          <thead><tr><th>S.No</th><th>Name</th><th>Roll No</th><th>Time</th><th>Status</th></tr></thead>
+          <tbody id="dashTableBody"><tr><td colspan="5" class="empty-row">Loading…</td></tr></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ══ PAGE: MARK ATTENDANCE (AUTO MODE) -->
+    <section class="page" id="page-camera">
+      <div class="camera-layout">
+
+        <!-- Left: camera feed -->
+        <div class="camera-box">
+          <video id="webcam" autoplay playsinline style="display:none"></video>
+          <canvas id="snapshot" style="display:none"></canvas>
+          <canvas id="overlayCanvas" class="overlay-canvas" style="display:none"></canvas>
+          <div class="camera-overlay" id="cameraOverlay">
+            <div class="cam-idle-icon">◉</div>
+            <p>Click "Start Camera" to begin</p>
+            <p style="font-size:11px;margin-top:6px;color:var(--muted)">Attendance marks automatically</p>
+          </div>
+
+          <!-- Live status bar at bottom of camera -->
+          <div class="cam-statusbar" id="camStatusBar" style="display:none">
+            <span id="camStatusText">Scanning…</span>
+            <span id="camTimer" class="cam-timer">3s</span>
+          </div>
+        </div>
+
+        <!-- Right: controls + live results -->
+        <div class="camera-controls">
+          <div class="auto-mode-badge">
+            <span class="pulse-dot"></span>
+            AUTO MODE — No button needed
+          </div>
+
+          <button class="btn btn--primary btn--full" id="btnStartCam" onclick="startCamera()">▶ Start Camera</button>
+          <button class="btn btn--danger  btn--full" id="btnStopCam"  onclick="stopCamera()" disabled>■ Stop Camera</button>
+
+          <!-- Interval selector -->
+          <div class="interval-row">
+            <label>Scan every:</label>
+            <select id="scanInterval">
+              <option value="2000">2 seconds</option>
+              <option value="3000" selected>3 seconds</option>
+              <option value="5000">5 seconds</option>
+              <option value="10000">10 seconds</option>
+            </select>
+          </div>
+
+          <!-- Live log -->
+          <div class="live-log-box">
+            <p class="result-title">📋 Live Recognition Log</p>
+            <div id="liveLog">
+              <p class="empty-hint">Start camera to see live results here…</p>
+            </div>
+          </div>
+
+          <!-- Session summary -->
+          <div class="session-box" id="sessionBox" style="display:none">
+            <p class="result-title">✅ Session Summary</p>
+            <div id="sessionSummary"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══ PAGE: RECORDS  -->
+    <section class="page" id="page-records">
+      <div class="filter-bar">
+        <label>Filter by date:
+          <input type="date" id="filterDate" onchange="loadAttendanceRecords()" />
+        </label>
+        <button class="btn btn--ghost" onclick="clearDateFilter()">Show All</button>
+        <button class="btn btn--ghost" onclick="exportRecords()">⬇ Export CSV</button>
+      </div>
+      <div class="table-wrap">
+        <table class="data-table">
+          <thead><tr><th>S.No</th><th>Name</th><th>Roll No</th><th>Date</th><th>Time</th><th>Status</th></tr></thead>
+          <tbody id="recordsBody"><tr><td colspan="6" class="empty-row">Select a date or click Show All</td></tr></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ══ PAGE: STUDENTS LIST  -->
+    <section class="page" id="page-students">
+      <div class="section-header">
+        <h2>Enrolled Students</h2>
+        <button class="btn btn--primary" onclick="toggleAddForm()">+ Add Student</button>
+      </div>
+      <div class="add-form" id="addForm" style="display:none">
+        <h3>Add New Student</h3>
+        <div class="form-row">
+          <input type="text" id="newName"    placeholder="Full Name" />
+          <input type="text" id="newRoll"    placeholder="Roll Number" />
+          <button class="btn btn--success" onclick="addStudent()">Save</button>
+        </div>
+        <p class="form-hint">After saving → go to <strong>Enroll Student</strong> page to capture face photos → then <strong>Admin → Retrain</strong>.</p>
+      </div>
+      <div class="table-wrap">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>S.No</th><th>Name</th><th>Roll No</th>
+              <th>Present Days</th><th>Attendance %</th><th>Last Seen</th><th>Action</th>
+            </tr>
+          </thead>
+          <tbody id="studentsBody"><tr><td colspan="7" class="empty-row">Loading…</td></tr></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ══ PAGE: INDIVIDUAL STUDENT PROFILE  -->
+    <section class="page" id="page-profile">
+      <div class="profile-back">
+        <button class="btn btn--ghost" onclick="navigateTo('students')">← Back to Students</button>
+      </div>
+
+      <!-- Profile header -->
+      <div class="profile-header" id="profileHeader">
+        <div class="profile-avatar" id="profileAvatar">?</div>
+        <div class="profile-info">
+          <h2 id="profileName">—</h2>
+          <p id="profileRoll" style="color:var(--muted);font-size:13px">—</p>
+        </div>
+      </div>
+
+      <!-- Stats row -->
+      <div class="stat-grid" style="margin-top:20px">
+        <div class="stat-card stat-card--green">
+          <p class="stat-label">Days Present</p>
+          <p class="stat-value" id="profilePresent">—</p>
+        </div>
+        <div class="stat-card stat-card--blue">
+          <p class="stat-label">Working Days</p>
+          <p class="stat-value" id="profileWorking">—</p>
+        </div>
+        <div class="stat-card stat-card--amber">
+          <p class="stat-label">Attendance %</p>
+          <p class="stat-value" id="profilePct">—</p>
+        </div>
+        <div class="stat-card stat-card--red">
+          <p class="stat-label">Last Seen</p>
+          <p class="stat-value" style="font-size:18px" id="profileLastSeen">—</p>
+        </div>
+      </div>
+
+      <!-- Percentage bar -->
+      <div class="pct-bar-wrap">
+        <div class="pct-bar-track">
+          <div class="pct-bar-fill" id="profilePctBar" style="width:0%"></div>
+        </div>
+        <span id="profilePctLabel">0%</span>
+      </div>
+
+      <!-- Monthly breakdown -->
+      <div class="section-header" style="margin-top:24px">
+        <h2>Monthly Breakdown</h2>
+        <button class="btn btn--ghost" onclick="exportStudentCSV()">⬇ Export CSV</button>
+      </div>
+      <div class="table-wrap" style="margin-bottom:24px">
+        <table class="data-table">
+          <thead><tr><th>Month</th><th>Days Present</th></tr></thead>
+          <tbody id="profileMonthly"><tr><td colspan="2" class="empty-row">—</td></tr></tbody>
+        </table>
+      </div>
+
+      <!-- Full history -->
+      <div class="section-header">
+        <h2>Full Attendance History</h2>
+      </div>
+      <div class="table-wrap">
+        <table class="data-table">
+          <thead><tr><th>S.No</th><th>Date</th><th>Day</th><th>Time</th><th>Status</th></tr></thead>
+          <tbody id="profileHistory"><tr><td colspan="5" class="empty-row">Loading…</td></tr></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ══ PAGE: ENROLL  -->
+    <section class="page" id="page-enroll">
+      <div class="enroll-layout">
+        <div class="camera-box">
+          <video id="enrollWebcam" autoplay playsinline style="display:none"></video>
+          <canvas id="enrollCanvas" style="display:none"></canvas>
+          <img id="enrollPreview" style="display:none;width:100%;height:100%;object-fit:cover" alt="Preview" />
+          <div class="camera-overlay" id="enrollOverlay"><p>Camera inactive</p></div>
+        </div>
+        <div class="camera-controls">
+          <h3 style="font-family:var(--font-h);font-size:15px;margin-bottom:4px">Enroll Student Face</h3>
+          <p class="form-hint" style="margin-bottom:12px">Capture 5+ photos per student. Different angles work best.</p>
+          <input type="text" id="enrollRoll" placeholder="Roll Number" class="full-input" />
+          <button class="btn btn--primary btn--full" id="btnEnrollStart" onclick="startEnrollCam()">▶ Start Camera</button>
+          <button class="btn btn--danger  btn--full" id="btnEnrollStop"  onclick="stopEnrollCam()" disabled>■ Stop</button>
+          <button class="btn btn--success btn--full" id="btnEnrollSnap"  onclick="enrollSnap()" disabled>📸 Capture Photo</button>
+          <div class="result-box" style="margin-top:12px">
+            <p class="result-title">Photo Count</p>
+            <div id="enrollStatus"><p class="empty-hint">Enter roll number and start camera.</p></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══ PAGE: ADMIN  -->
+    <section class="page" id="page-admin">
+      <div class="admin-grid">
+        <div class="admin-card">
+          <h3>🔄 Retrain Face Model</h3>
+          <p>Re-encodes all faces in <code>dataset/</code>. Run after enrolling new students.</p>
+          <button class="btn btn--primary" id="btnRetrain" onclick="retrain()">Start Retraining</button>
+          <pre id="retrainLog" class="log-box" style="display:none"></pre>
+        </div>
+        <div class="admin-card">
+          <h3>📊 System Stats</h3>
+          <div id="adminStats"><p class="empty-hint">Loading…</p></div>
+          <button class="btn btn--ghost" style="margin-top:12px" onclick="loadAdminStats()">↺ Refresh</button>
+        </div>
+        <div class="admin-card">
+          <h3>⬇ Export All Attendance</h3>
+          <p>Download complete attendance history as CSV.</p>
+          <button class="btn btn--ghost" onclick="window.location='/api/export/attendance'">Download CSV</button>
+        </div>
+        <div class="admin-card">
+          <h3>⚙ Configuration</h3>
+          <p>Edit <code>backend/config.py</code> to change MySQL credentials, face recognition tolerance, Flask port.</p>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <div class="toast" id="toast"></div>
+  <script src="js/app.js"></script>
+</body>
+</html>
