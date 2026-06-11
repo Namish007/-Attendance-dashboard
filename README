@@ -1,0 +1,165 @@
+# 📸 FaceTrack — PHP Snapshot Manager & Attendance Backend
+
+> **`attendance.php`** — A single-file PHP backend that adds camera snapshot capture, a searchable image gallery, attendance logging, and student management to the AI Smart Attendance System.
+
+---
+
+## ✨ What this file does
+
+| Feature | Details |
+|---|---|
+| 📷 **Live camera capture** | Uses browser `getUserMedia` API to stream webcam, lets you take JPEG snapshots with one click |
+| 🖼️ **Snapshot gallery** | Grid view of all stored images, with download, delete, and lightbox zoom |
+| 📋 **Attendance log** | Date-filtered table with confidence scores, status badges, and linked snapshot thumbnails |
+| 👥 **Student management** | Add/search students, view per-student attendance percentage |
+| 📊 **Dashboard stats** | Live counts — enrolled students, present today, late, total snapshots |
+| 🤖 **AI engine bridge** | cURL ping to your Python Flask engine at `http://127.0.0.1:5000` — shows online/offline status |
+| 🛠️ **DB auto-setup** | Built-in SQL installer tab — creates all tables with one click |
+| 📤 **CSV export** | Export any day's attendance as a downloadable `.csv` |
+
+---
+
+## 🖼️ Screenshots
+
+### Dashboard + Camera capture tab
+![Capture tab](https://i.imgur.com/placeholder-capture.png)
+> Live webcam stream with scan overlay, snapshot label field, and recent captures grid on the right. Manual attendance entry form below.
+
+### Snapshot gallery
+![Gallery tab](https://i.imgur.com/placeholder-gallery.png)
+> Auto-fill grid of all stored JPEGs. Hover reveals download & delete buttons. Click any image to open fullscreen lightbox.
+
+### Attendance log
+![Attendance tab](https://i.imgur.com/placeholder-attendance.png)
+> Filter by date and class. Each row shows name, roll number, time-in, AI confidence percentage, status badge (Present / Late / Absent), and thumbnail of the face snapshot.
+
+### Student list
+![Students tab](https://i.imgur.com/placeholder-students.png)
+> Live-search student table with attendance percentage. Add new students from the left panel — they're immediately available for the Python AI engine to recognise.
+
+---
+
+## 🚀 Quick start
+
+### 1 — Requirements
+- PHP 8.0+ with `mysqli`, `curl`, `gd` extensions
+- MySQL 5.7+ or MariaDB 10.4+
+- Your Python AI engine running on `http://127.0.0.1:5000` (optional — system works standalone)
+
+### 2 — Drop the file into your project
+```
+attendance_system/
+├── attendance.php          ← this file
+├── attendance_dashboard.html
+└── snapshots/              ← auto-created on first snapshot
+```
+
+### 3 — Edit the config block (top of file)
+```php
+define('DB_HOST', 'localhost');
+define('DB_USER', 'root');      // your MySQL username
+define('DB_PASS', '');          // your MySQL password
+define('DB_NAME', 'attendance_db');
+```
+
+### 4 — Create the database tables
+Open `attendance.php` in your browser → click the **DB setup** tab → click **Run now via PHP**.
+
+Or manually paste the SQL into phpMyAdmin / MySQL Workbench.
+
+### 5 — Open it
+```
+http://localhost/attendance_system/attendance.php
+```
+
+---
+
+## 🔌 REST API (AJAX endpoints)
+
+All endpoints are on the same URL — pass `action` as a POST or GET parameter.
+
+| Action | Method | Parameters | Returns |
+|---|---|---|---|
+| `save_snapshot` | POST | `image` (base64 data-URL), `label` | `{ok, id, filename, url}` |
+| `list_snapshots` | GET | `page`, `per_page` | `{snapshots[], total}` |
+| `delete_snapshot` | POST | `id` | `{ok, deleted}` |
+| `log_attendance` | POST | `student_id`, `name`, `class`, `confidence`, `status`, `snapshot_file` | `{ok, id}` |
+| `get_attendance` | GET | `date`, `class` | `{records[]}` |
+| `get_stats` | GET | — | `{stats}` |
+| `add_student` | POST | `name`, `roll_number`, `class`, `email` | `{ok, id}` |
+| `list_students` | GET | `search`, `class` | `{students[]}` |
+| `ai_status` | GET | — | `{online: bool}` |
+
+### Example — log attendance from Python
+```python
+import requests
+
+requests.post('http://localhost/attendance_system/attendance.php', data={
+    'action':        'log_attendance',
+    'student_id':    'CS21001',
+    'name':          'Arjun Mehta',
+    'class':         'CSE-A',
+    'confidence':    96.4,
+    'status':        'present',
+    'snapshot_file': '20250610_090312_session-start.jpg',
+})
+```
+
+### Example — save a snapshot from Python (OpenCV frame)
+```python
+import requests, base64, cv2
+
+_, buf = cv2.imencode('.jpg', frame)
+b64 = base64.b64encode(buf).decode()
+
+requests.post('http://localhost/attendance_system/attendance.php', data={
+    'action': 'save_snapshot',
+    'image':  f'data:image/jpeg;base64,{b64}',
+    'label':  'auto-capture',
+})
+```
+
+---
+
+## 🗄️ Database schema
+
+```sql
+students        — id, name, roll_number, class, email, enrolled_at
+attendance      — id, student_id, name, class, date, time_in, confidence, status, snapshot_file
+snapshots       — id, filename, label, taken_at
+```
+
+---
+
+## 📁 File structure after setup
+
+```
+attendance_system/
+├── attendance.php
+├── attendance_dashboard.html
+└── snapshots/
+    ├── 20250610_090312_session-start.jpg
+    ├── 20250610_090445_arjun-mehta.jpg
+    └── ...
+```
+
+---
+
+## 🔒 Security notes for production
+
+- Add HTTP Basic Auth or a session login check at the top of `attendance.php`
+- Set `open_basedir` to restrict PHP file access
+- Move the `snapshots/` folder outside the web root and serve via a PHP proxy
+- Use prepared statements (already used throughout) — never interpolate user input into SQL
+
+---
+
+## 🤝 Works alongside
+
+- **`attendance_dashboard.html`** — the humanized frontend dashboard (same repo)  
+- **Python Flask AI engine** — face recognition backend using OpenCV + LBPH  
+- **OpenCV** — `cv2.VideoCapture` feeds frames to the recogniser  
+
+---
+
+*Part of the [AI-Based Smart Attendance Monitoring System](https://github.com/r8481068-byte/AI-Based-Smart-Attendance-Monitoring-System)*
