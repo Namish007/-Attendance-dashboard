@@ -11,7 +11,6 @@
 </head>
 <body>
 
-  <!-- ══ SIDEBAR  -->
   <aside class="sidebar">
     <div class="sidebar__brand">
       <div class="brand-icon">AI</div>
@@ -34,14 +33,12 @@
     </div>
   </aside>
 
-  <!-- ══ MAIN  -->
   <main class="main">
     <header class="topbar">
       <h1 class="topbar__title" id="pageTitle">Dashboard</h1>
       <div class="topbar__date" id="liveClock"></div>
     </header>
 
-    <!-- ══ PAGE: DASHBOARD  -->
     <section class="page active" id="page-dashboard">
       <div class="stat-grid">
         <div class="stat-card stat-card--green">
@@ -76,11 +73,9 @@
       </div>
     </section>
 
-    <!-- ══ PAGE: MARK ATTENDANCE (AUTO MODE) -->
     <section class="page" id="page-camera">
       <div class="camera-layout">
 
-        <!-- Left: camera feed -->
         <div class="camera-box">
           <video id="webcam" autoplay playsinline style="display:none"></video>
           <canvas id="snapshot" style="display:none"></canvas>
@@ -91,14 +86,12 @@
             <p style="font-size:11px;margin-top:6px;color:var(--muted)">Attendance marks automatically</p>
           </div>
 
-          <!-- Live status bar at bottom of camera -->
           <div class="cam-statusbar" id="camStatusBar" style="display:none">
             <span id="camStatusText">Scanning…</span>
             <span id="camTimer" class="cam-timer">3s</span>
           </div>
         </div>
 
-        <!-- Right: controls + live results -->
         <div class="camera-controls">
           <div class="auto-mode-badge">
             <span class="pulse-dot"></span>
@@ -108,7 +101,6 @@
           <button class="btn btn--primary btn--full" id="btnStartCam" onclick="startCamera()">▶ Start Camera</button>
           <button class="btn btn--danger  btn--full" id="btnStopCam"  onclick="stopCamera()" disabled>■ Stop Camera</button>
 
-          <!-- Interval selector -->
           <div class="interval-row">
             <label>Scan every:</label>
             <select id="scanInterval">
@@ -119,7 +111,6 @@
             </select>
           </div>
 
-          <!-- Live log -->
           <div class="live-log-box">
             <p class="result-title">📋 Live Recognition Log</p>
             <div id="liveLog">
@@ -127,7 +118,6 @@
             </div>
           </div>
 
-          <!-- Session summary -->
           <div class="session-box" id="sessionBox" style="display:none">
             <p class="result-title">✅ Session Summary</p>
             <div id="sessionSummary"></div>
@@ -136,7 +126,6 @@
       </div>
     </section>
 
-    <!-- ══ PAGE: RECORDS  -->
     <section class="page" id="page-records">
       <div class="filter-bar">
         <label>Filter by date:
@@ -153,7 +142,6 @@
       </div>
     </section>
 
-    <!-- ══ PAGE: STUDENTS LIST  -->
     <section class="page" id="page-students">
       <div class="section-header">
         <h2>Enrolled Students</h2>
@@ -181,13 +169,11 @@
       </div>
     </section>
 
-    <!-- ══ PAGE: INDIVIDUAL STUDENT PROFILE  -->
     <section class="page" id="page-profile">
       <div class="profile-back">
         <button class="btn btn--ghost" onclick="navigateTo('students')">← Back to Students</button>
       </div>
 
-      <!-- Profile header -->
       <div class="profile-header" id="profileHeader">
         <div class="profile-avatar" id="profileAvatar">?</div>
         <div class="profile-info">
@@ -196,7 +182,6 @@
         </div>
       </div>
 
-      <!-- Stats row -->
       <div class="stat-grid" style="margin-top:20px">
         <div class="stat-card stat-card--green">
           <p class="stat-label">Days Present</p>
@@ -216,7 +201,6 @@
         </div>
       </div>
 
-      <!-- Percentage bar -->
       <div class="pct-bar-wrap">
         <div class="pct-bar-track">
           <div class="pct-bar-fill" id="profilePctBar" style="width:0%"></div>
@@ -224,7 +208,6 @@
         <span id="profilePctLabel">0%</span>
       </div>
 
-      <!-- Monthly breakdown -->
       <div class="section-header" style="margin-top:24px">
         <h2>Monthly Breakdown</h2>
         <button class="btn btn--ghost" onclick="exportStudentCSV()">⬇ Export CSV</button>
@@ -236,7 +219,6 @@
         </table>
       </div>
 
-      <!-- Full history -->
       <div class="section-header">
         <h2>Full Attendance History</h2>
       </div>
@@ -248,7 +230,6 @@
       </div>
     </section>
 
-    <!-- ══ PAGE: ENROLL  -->
     <section class="page" id="page-enroll">
       <div class="enroll-layout">
         <div class="camera-box">
@@ -272,7 +253,6 @@
       </div>
     </section>
 
-    <!-- ══ PAGE: ADMIN  -->
     <section class="page" id="page-admin">
       <div class="admin-grid">
         <div class="admin-card">
