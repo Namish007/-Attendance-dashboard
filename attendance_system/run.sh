@@ -1,9 +1,5 @@
 #!/bin/bash
-# ─────────────────────────────────────────────────────────────
-# run.sh  —  Linux / macOS one-click launcher
-# Make executable:  chmod +x run.sh
-# Run:              ./run.sh
-# ─────────────────────────────────────────────────────────────
+
 
 set -e
 cd "$(dirname "$0")"
@@ -22,13 +18,13 @@ fi
 
 PYTHON=python3
 
-# Check deps
+
 if ! $PYTHON -c "import flask" &>/dev/null; then
     echo "[INFO] Installing dependencies..."
     $PYTHON -m pip install -r requirements.txt
 fi
 
-# Check encodings
+
 if [ ! -f "models/encodings.pkl" ]; then
     echo "[WARN] Face encodings not found."
     read -p "       Run training now? (y/n) > " choice
