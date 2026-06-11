@@ -39,7 +39,7 @@
     display: flex;
   }
 
-  /* ── Sidebar ── */
+  
   .sidebar {
     width: 228px;
     min-height: 100vh;
@@ -140,7 +140,7 @@
   .user-name { font-size: 13px; font-weight: 500; color: var(--text); }
   .user-role { font-size: 11px; color: var(--text-muted); }
 
-  /* ── Main ── */
+  
   .main {
     margin-left: 228px;
     flex: 1;
@@ -149,7 +149,6 @@
     flex-direction: column;
   }
 
-  /* ── Topbar ── */
   .topbar {
     display: flex; align-items: center;
     padding: 0 28px;
@@ -205,13 +204,10 @@
     0%, 100% { opacity: 1; }
     50% { opacity: 0.4; }
   }
-
-  /* ── Content ── */
   .content { padding: 28px; flex: 1; }
   .page { display: none; }
   .page.active { display: block; }
 
-  /* ── Stat Cards ── */
   .stats-grid {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
@@ -367,7 +363,7 @@
   .btn-sm { padding: 5px 10px; font-size: 12px; }
   .btn-success { background: var(--green-soft); border: 1px solid rgba(34,197,94,0.2); color: var(--green); }
 
-  /* ── Recent detections ── */
+
   .detection-list { display: flex; flex-direction: column; gap: 8px; }
   .detection-item {
     display: flex; align-items: center; gap: 12px;
@@ -396,7 +392,7 @@
   .d-status.present { background: var(--green-soft); color: var(--green); }
   .d-status.late { background: var(--amber-soft); color: var(--amber); }
 
-  /* ── Class overview ── */
+ 
   .class-bars { display: flex; flex-direction: column; gap: 12px; }
   .class-row { }
   .class-info {
@@ -417,7 +413,7 @@
     transition: width 0.5s ease;
   }
 
-  /* ── Attendance table ── */
+ 
   .att-table {
     width: 100%; border-collapse: collapse;
     font-size: 13px;
@@ -452,7 +448,7 @@
     height: 4px; border-radius: 99px; margin-top: 3px;
   }
 
-  /* ── Students page ── */
+
   .students-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
@@ -503,7 +499,7 @@
   .enroll-text { font-size: 14px; font-weight: 500; color: var(--text); margin-bottom: 4px; }
   .enroll-sub { font-size: 12px; color: var(--text-muted); }
 
-  /* ── Form ── */
+
   .form-group { margin-bottom: 16px; }
   .form-label {
     display: block; font-size: 12px; font-weight: 500;
@@ -525,7 +521,7 @@
   .form-input:focus { border-color: var(--accent); }
   select.form-input { cursor: pointer; }
 
-  /* ── Reports page ── */
+
   .chart-placeholder {
     height: 200px;
     position: relative;
@@ -546,7 +542,7 @@
   .chart-bar:hover { opacity: 1; }
   .chart-label { font-size: 10px; color: var(--text-muted); }
 
-  /* ── Search & filter bar ── */
+
   .search-bar {
     display: flex; align-items: center; gap: 10px;
     margin-bottom: 20px;
@@ -574,7 +570,7 @@
   .search-input:focus { border-color: var(--accent); }
   .search-input::placeholder { color: var(--text-muted); }
 
-  /* ── Notification item ── */
+
   .notif-list { display: flex; flex-direction: column; gap: 8px; }
   .notif-item {
     display: flex; gap: 12px;
@@ -592,7 +588,7 @@
   .notif-msg { font-size: 12px; color: var(--text); line-height: 1.5; }
   .notif-time { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
 
-  /* ── Responsive ── */
+  
   @media (max-width: 1200px) {
     .stats-grid { grid-template-columns: repeat(2, 1fr); }
     .two-col { grid-template-columns: 1fr; }
@@ -606,7 +602,6 @@
 </head>
 <body>
 
-<!-- Sidebar -->
 <aside class="sidebar">
   <div class="sidebar-logo">
     <div class="logo-mark">
@@ -657,7 +652,7 @@
   </div>
 </aside>
 
-<!-- Main area -->
+
 <main class="main">
   <header class="topbar">
     <span class="topbar-title" id="page-title">Dashboard</span>
@@ -679,7 +674,7 @@
 
   <div class="content">
 
-    <!-- ── Dashboard ── -->
+    
     <div class="page active" id="page-dashboard">
       <div class="stats-grid">
         <div class="stat-card">
@@ -709,7 +704,7 @@
       </div>
 
       <div class="two-col">
-        <!-- Camera widget -->
+       
         <div class="card">
           <div class="card-header">
             <span class="card-title">Live Feed — Room 4B</span>
@@ -732,20 +727,19 @@
           </div>
         </div>
 
-        <!-- Recent detections -->
         <div class="card">
           <div class="card-header">
             <span class="card-title">Recent Detections</span>
             <button class="card-action" onclick="showPage('attendance')">View all →</button>
           </div>
           <div class="detection-list" id="detect-list">
-            <!-- filled by JS -->
+       
           </div>
         </div>
       </div>
 
       <div class="three-col">
-        <!-- Weekly attendance chart -->
+      
         <div class="card">
           <div class="card-header">
             <span class="card-title">This Week</span>
@@ -762,24 +756,24 @@
             <span class="card-title">By Class</span>
           </div>
           <div class="class-bars" id="class-bars">
-            <!-- filled by JS -->
+            
           </div>
         </div>
 
-        <!-- Alerts -->
+        
         <div class="card">
           <div class="card-header">
             <span class="card-title">Alerts</span>
             <button class="card-action">Mark all read</button>
           </div>
           <div class="notif-list" id="alerts-list">
-            <!-- filled by JS -->
+         
           </div>
         </div>
       </div>
     </div>
 
-    <!-- ── Live Camera ── -->
+   
     <div class="page" id="page-live">
       <div style="display:grid; grid-template-columns:1fr 340px; gap:20px;">
         <div class="card" style="padding:0; overflow:hidden;">
@@ -830,14 +824,14 @@
           <div class="card" style="flex:1;">
             <div class="card-header"><span class="card-title">Live feed</span></div>
             <div class="detection-list" id="live-log">
-              <!-- filled by JS -->
+            
             </div>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- ── Students ── -->
+ 
     <div class="page" id="page-students">
       <div class="search-bar">
         <div class="search-input-wrap">
@@ -851,11 +845,10 @@
         <button class="btn btn-primary" onclick="showPage('enroll')"><i class="fas fa-plus"></i> Add student</button>
       </div>
       <div class="students-grid" id="students-grid">
-        <!-- filled by JS -->
+      
       </div>
     </div>
 
-    <!-- ── Enroll ── -->
     <div class="page" id="page-enroll">
       <div style="max-width:700px; display:grid; grid-template-columns:1fr 1fr; gap:20px;">
         <div class="card" style="grid-column:1/-1;">
@@ -910,7 +903,6 @@
       </div>
     </div>
 
-    <!-- ── Attendance Log ── -->
     <div class="page" id="page-attendance">
       <div class="search-bar">
         <div class="search-input-wrap">
@@ -931,12 +923,11 @@
               <th>Time In</th><th>Confidence</th><th>Status</th>
             </tr>
           </thead>
-          <tbody id="att-tbody"><!-- filled by JS --></tbody>
+          <tbody id="att-tbody"></tbody>
         </table>
       </div>
     </div>
 
-    <!-- ── Reports ── -->
     <div class="page" id="page-reports">
       <div class="stats-grid" style="margin-bottom:24px;">
         <div class="stat-card">
@@ -977,7 +968,6 @@
       </div>
     </div>
 
-    <!-- ── Settings ── -->
     <div class="page" id="page-settings">
       <div style="max-width:600px; display:flex; flex-direction:column; gap:16px;">
         <div class="card">
@@ -1028,7 +1018,6 @@
       </div>
     </div>
 
-    <!-- ── Notifications ── -->
     <div class="page" id="page-notifs">
       <div style="max-width:560px; display:flex; flex-direction:column; gap:10px;" id="notifs-list">
       </div>
@@ -1038,7 +1027,7 @@
 </main>
 
 <script>
-// Data
+
 const students = [
   {name:'Arjun Mehta', roll:'CS21001', cls:'CSE-A', rate:92, color:'#3b82f6'},
   {name:'Priya Sharma', roll:'CS21002', cls:'CSE-A', rate:88, color:'#8b5cf6'},
@@ -1251,20 +1240,16 @@ function showPage(id){
   if(id==='notifs') buildNotifs();
 }
 
-// Set date in topbar
 const now = new Date();
 document.getElementById('page-date').textContent = now.toLocaleDateString('en-IN',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
 
-// Set today's date in attendance filter
 const dateInput = document.getElementById('att-date');
 if(dateInput) dateInput.valueAsDate = now;
 
-// Confidence slider
 const confSlider = document.getElementById('conf-slider');
 const confVal = document.getElementById('conf-val');
 if(confSlider) confSlider.addEventListener('input', ()=>{ confVal.textContent = confSlider.value+'%'; });
 
-// Init
 buildDetections();
 buildWeeklyChart();
 buildClassBars();
@@ -1272,7 +1257,6 @@ buildAlerts();
 buildAttendanceTable();
 buildStudentsGrid();
 
-// Sample capture demo
 let sampleCount = 0;
 </script>
 </body>
