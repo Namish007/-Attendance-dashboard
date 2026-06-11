@@ -1,8 +1,5 @@
 @echo off
-:: ─────────────────────────────────────────────────────────────
-:: run.bat  —  Windows one-click launcher
-:: Double-click this file OR run it in CMD from the project root.
-:: ─────────────────────────────────────────────────────────────
+
 
 title AI Smart Attendance System
 
@@ -19,7 +16,7 @@ if %errorlevel% neq 0 (
     pause & exit /b 1
 )
 
-:: Check if dependencies are installed (quick check)
+
 python -c "import flask" >nul 2>&1
 if %errorlevel% neq 0 (
     echo [INFO] Installing dependencies...
@@ -30,7 +27,7 @@ if %errorlevel% neq 0 (
     )
 )
 
-:: Check if encodings exist
+
 if not exist "models\encodings.pkl" (
     echo [WARN] Face encodings not found.
     echo        Run training first? (y/n)
